@@ -1,4 +1,4 @@
-include .env
+include app.env
 
 # DATABASE
 db-migrateup:
@@ -12,6 +12,9 @@ db-migrateforce:
 
 sqlc:
 	@sqlc generate
+
+server:
+	@go run ./cmd/bab
 
 # Test
 test:

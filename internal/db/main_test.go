@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
+	"theaveasso.bab/internal/utility"
 )
 
 var (
@@ -14,14 +15,9 @@ var (
 	testDB      *sql.DB
 )
 
-const (
-	dbDriver = "postgres"
-	dsn      = "postgres://postgres:secret@localhost:5432/bab?sslmode=disable"
-)
-
 func TestMain(m *testing.M) {
-    var err error
-	testDB, err = sql.Open("postgres", dsn)
+    config, err := utility.LoadConfig("../..")
+	testDB, err = sql.Open(config.DBDriver, config.DSN)
 	if err != nil {
 		log.Fatal("error connect to db", err)
 	}
