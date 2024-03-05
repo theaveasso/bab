@@ -16,7 +16,7 @@ func main() {
         log.Fatal("cannot load config:", err)
     }
 	var conn *sql.DB
-	var queries *db.Store
+	var queries db.Store
 
 	conn, err = sql.Open(config.DBDriver, config.DSN)
 	if err != nil {

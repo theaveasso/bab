@@ -6,20 +6,25 @@ import (
 	"fmt"
 )
 
-type Store struct {
+type SQLStore struct {
 	*Queries
 	db *sql.DB
 }
 
-func NewStore(db *sql.DB) *Store {
-	return &Store{
+type Store interface {
+    Querier
+    TransferTX(ctx context.Context, args TransferTXParams) (TransferTXResult, error)
+}
+
+func NewStore(db *sql.DB) Store {
+	return &SQLStore{
 		Queries: New(db),
 		db:      db,
 	}
 }
 
 // execTx executes a function within a database transaction
-func (s *Store) execTx(ctx context.Context, f func(*Queries) error) error {
+func (s *SQLStore) execTx(ctx context.Context, f func(*Queries) error) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -51,7 +56,7 @@ type TransferTXResult struct {
 	ToEntry     Entry    `json:"to_entry"`
 }
 
-func (s *Store) TransferTX(ctx context.Context, args TransferTXParams) (TransferTXResult, error) {
+func (s *SQLStore) TransferTX(ctx context.Context, args TransferTXParams) (TransferTXResult, error) {
 	var result TransferTXResult
 
 	err := s.execTx(ctx, func(q *Queries) error {
